@@ -1,0 +1,51 @@
+.bg-white{
+    margin-top: -134px;
+}
+.contact{
+    font-size: 1.14286em;
+    font-style: inherit;
+    line-height: 1.25;
+    color: var(--ds-text,var(--ds-text,#172B4D));
+    font-weight: var(--ds-font-weight-semibold,600);
+    letter-spacing: -0.006em;
+    margin-top: 24px;
+    display: block;
+    margin-bottom: 16px;
+}
+.text{
+    font-size: 1em;
+    font-style: inherit;
+    line-height: 1.14286;
+    font-weight: var(--ds-font-weight-semibold,600);
+    letter-spacing: -0.003em;
+    color: rgb(0, 116, 224);
+    margin: 0px;
+}
+.list-group-item{
+    padding: 0;
+}
+.uli{
+    list-style-type: none;
+    padding-left: 0px;
+}
+.l1{
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    padding: 0px 16px;
+}
+.l2{
+    width: 100%;
+    overflow: hidden;
+}
+.text-dark{
+    font-size: 14px;
+}
+.list-group-item:hover{
+    box-shadow: 5px 10px #888888;
+    transition: 0.3s;
+}
