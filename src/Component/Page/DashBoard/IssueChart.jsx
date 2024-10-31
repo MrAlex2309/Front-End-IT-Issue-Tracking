@@ -12,16 +12,16 @@ export default function IssueChart() {
     const [externalByComplete, setExternalByComplete] = useState([])
     const [externalByPening, setExternalByPending] = useState()
     const getIssueInternalbyComplete=async()=>{
-        await api.get('/api/issue/?issueType=INTERNAL&status=DONE').then(res=>res.data).then(ress=>setInternalByComplete(ress.content))
+        await api.get('/api/issue/?issueType=INTERNAL&status=DONE').then(res=>res.data).then(ress=>setInternalByComplete(ress))
     }
     const getIssueExternalbyComplete = async()=>{
-        await api.get('/api/issue/?issueType=EXTERNAL&status=DONE').then(res=>res.data).then(ress=>setExternalByComplete(ress.content))
+        await api.get('/api/issue/?issueType=EXTERNAL&status=DONE').then(res=>res.data).then(ress=>setExternalByComplete(ress))
     }
     const getIssueInternalbyPending=async()=>{
-        await api.get('/api/issue/?issueType=INTERNAL').then(res=>res.data).then(ress=>setInternalPending(ress.content))
+        await api.get('/api/issue/?issueType=INTERNAL').then(res=>res.data).then(ress=>setInternalPending(ress))
     }
     const getIssueExternalbyPending=async()=>{
-        await api.get('/api/issue/?issueType=EXTERNAL').then(res=>res.data).then(ress=>setExternalPending(ress.content))
+        await api.get('/api/issue/?issueType=EXTERNAL').then(res=>res.data).then(ress=>setExternalPending(ress))
     }
     useEffect(()=>{
         getIssueExternalbyComplete()

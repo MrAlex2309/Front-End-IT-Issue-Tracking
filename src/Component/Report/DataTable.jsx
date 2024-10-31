@@ -17,16 +17,7 @@ import Card from "react-bootstrap/Card";
 import ImgPreview from "../../Utility/Model/ImgPreview";
 import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
-
-const Preview = (p) => {
-  return (
-    <Link to={`/report/Detail/${p.data.id}`}>
-      <p>
-        <b>{p.data.issue_code}</b>
-      </p>
-    </Link>
-  );
-};
+import Pagination from '@mui/material/Pagination';
 
 function DataTable() {
   const [datas, setDatas] = useState([]);
@@ -36,6 +27,9 @@ function DataTable() {
   const [filter, setFilter] = useState();
   const [show, setShow] = useState(false);
   const [filters, setFilters] = useState(false);
+  const [page, setPage] = useState()
+  const [pageApi, setPageApi] = useState()
+  const [limit, setLimit] = useState(1)
   const [file, setFile] = useState([]);
   const [images, setImages] = useState([]);
   const [clients, setClients] = useState([]);
@@ -70,6 +64,13 @@ function DataTable() {
     setDescription("");
   };
   const handleShowAdd = () => setShowAdd(true);
+  const changeBackGroun = (status)=>{
+    if(status === 'DONE'){
+      return 'green'
+    } else if(status === 'PENDING'){
+      return 'gray'
+    } else return 'red'
+  }
 
   const updatedDateFormats = (prop) => {
     var dateFormat = new Date(prop);
@@ -88,7 +89,6 @@ function DataTable() {
 
   const onChangeHandlerFilter = (selectOption) => {
     setFilterdClient(selectOption && selectOption.value);
-    console.log(selectOption);
   };
   const defaultColDef = useMemo(() => {
     return {
@@ -135,67 +135,20 @@ function DataTable() {
       .get(
         `/api/issue/?${
           debounceSearchClient ? "client=" + debounceSearchClient : ""
-        }${debouncedSearchTerm ? "&search=" + debouncedSearchTerm : ""}${
-          status ? "&issueType=" + status : ""
-        }${startDate ? "&startDate=" + startDate : ""}${
-          endDate ? "&endDate=" + endDate : ""
-        }`
+        }${debouncedSearchTerm ? "&search=" + debouncedSearchTerm : ""}${status ? "&issueType=" + status : ""}${startDate ? "&startDate=" + startDate : ""}${endDate ? "&endDate=" + endDate : ""}${
+          limit ? "&limit=" + limit : ""}${pageApi ? "&page=" + pageApi : ""}`
       )
       .then((res) => res.data)
-      .then((ress) => setDatas(ress.content));
+      .then((ress) => {setDatas(ress.content)
+        setPage(ress.totalElements)
+      });
   };
   useEffect(() => {
     fetchIssue();
-  }, [startDate, endDate, status, debouncedSearchTerm, debounceSearchClient]);
-  const updatedData =
-    datas &&
-    datas.map((item) => {
-      return {
-        ...item,
-        create_at: updatedDateFormats(item.create_at),
-        issue_date: updatedDateFormats(item.issue_date),
-      };
-    });
+  }, [startDate, endDate, status, debouncedSearchTerm, debounceSearchClient, pageApi, limit]);
 
-  const columns = [
-    { headerName: "No", field: "issue_code", cellRenderer: Preview },
-    {
-      headerName: "Date",
-      field: "create_at",
-    },
-    {
-      headerName: "Client",
-      field: "client.name",
-    },
-    { headerName: "Problem", field: "description" },
-
-    { headerName: "Solution", field: "solution" },
-    { headerName: "Type", field: "issue_type" },
-    {
-      headerName: "Responder",
-      field: "creator",
-      filter: "agMultiColumnFilter",
-      filterParams: {
-        excelMode: "windows",
-      },
-    },
-
-    {
-      headerName: "Status",
-
-      field: "status",
-      cellRenderer: (p) => {
-        if (p.data.status === "DONE") {
-          return <span className="badge bg-success">{p.data.status}</span>;
-        } else if (p.data.status === "OPEN") {
-          return <span className="badge bg-danger">{p.data.status}</span>;
-        } else if (p.data.status === "PENDING") {
-          return <span className="badge bg-secondary">{p.data.status}</span>;
-        }
-      },
-      filter: "agTextColumnFilter",
-    },
-  ];
+  const roundedNumber = Math.ceil(page / limit);
+console.log(limit)
   const onBtExportIssue = async (e) => {
     if (startDate || endDate) {
       try {
@@ -348,7 +301,7 @@ function DataTable() {
   };
 
   return (
-    <div className="container-fluid p-0 bg-light w-100">
+    <div className="container-fluid p-0 w-100">
       <div className="bg-primary p-3">
         <h3 className="text-white mb-0">Cases Report</h3>
       </div>
@@ -670,7 +623,7 @@ function DataTable() {
         </div>
       </div>
 
-      <div className="ag-theme-alpine" style={{ height: "81vh" }}>
+      {/* <div className="ag-theme-alpine" style={{ height: "700px" }}>
         <AgGridReact
           rowData={updatedData}
           columnDefs={columns}
@@ -682,7 +635,56 @@ function DataTable() {
           pagination={true}
           onGridReady={onGridReady}
         />
+      </div> */}
+      <div className="">
+        <table className="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">No</th>
+              <th scope="col">Date</th>
+              <th scope="col">Client</th>
+              <th scope="col">Problem</th>
+              <th scope="col">Solution</th>
+              <th scope="col">Type</th>
+              <th scope="col">Handler</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {datas &&
+              datas.map((value, index) => {
+                return (
+                  <tr key={index}>
+                    <th
+                      style={{ fontSize: "14px", textDecoration: "none" }}
+                      scope="row"
+                    >
+                      <Link to={`/report/Detail/${value.id}`}>
+                        {value.issue_code}
+                      </Link>
+                    </th>
+
+                    <td style={{ fontSize: "14px" }}>
+                      {updatedDateFormats(value.create_at)}
+                    </td>
+                    <td style={{ fontSize: "14px" }}>{value.client.name}</td>
+                    <td style={{ fontSize: "14px" }}>{value.description}</td>
+                    <td style={{ fontSize: "14px" }}>{value.solution}</td>
+                    <td style={{ fontSize: "14px" }}>{value.issue_type}</td>
+                    <td style={{ fontSize: "14px" }}>{value.creator}</td>
+                    <td style={{ fontSize: "12px",}}>
+                      <p className="mb-0 rounded text-center" style={{ backgroundColor: changeBackGroun(value.status), color:'white', fontWeight:'bold' }}>
+                      {value.status}
+                      </p>
+                      
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
       </div>
+      <Pagination count={roundedNumber}  onChange={(e, value) => setPageApi(value-1)}/>
     </div>
   );
 }

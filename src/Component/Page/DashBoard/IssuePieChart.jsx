@@ -10,7 +10,7 @@ export default function IssuePieChart() {
     const [internalIssue, setInternalIssue] = useState()
     const [externalIssue, setExternalIssue] = useState()
     const getIssue = async()=>{
-        await api.get('api/issue/').then(res=>res.data).then(ress=>setIssues(ress.content))
+        await api.get('api/issue/').then(res=>res.data).then(ress=>setIssues(ress))
     }
     useEffect(()=>{
         getIssue()

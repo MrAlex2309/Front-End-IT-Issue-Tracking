@@ -52,6 +52,22 @@ const UserProfileImage = ({ profilePicPath }) => {
   );
 };
 
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 function UserManage() {
   const initUser = {
     contact: "",
@@ -73,7 +89,9 @@ function UserManage() {
   const [roleIndex, setRoleIndex] = useState(null);
   const [viewPhoto, setViewPhoto] = useState(false);
   const [snaBar, setSnaBar] = useState(false);
+  const [searchUser, setSearchUser] = useState()
 
+  const debouncedSearchTerm = useDebounce(searchUser, 800);
   const changePhotoRef = useRef();
   const handleOpenSnackBar = () => {
     setSnaBar(true);
@@ -159,7 +177,7 @@ function UserManage() {
     });
   };
   const getAllUser = async () => {
-    await api.get(`api/user`).then((res) => {
+    await api.get(`api/user?${debouncedSearchTerm ? 'username='+debouncedSearchTerm : ''}`).then((res) => {
       setUsers(res.data);
     });
   };
@@ -180,7 +198,7 @@ function UserManage() {
   };
   useEffect(() => {
     getAllUser();
-  }, []);
+  }, [debouncedSearchTerm]);
   const updatedDateFormats = (prop) => {
     var dateFormat = new Date(prop);
     let month = dateFormat.getMonth() + 1;
@@ -195,6 +213,7 @@ function UserManage() {
     let s = `${year}-${month}-${day}`;
     return s;
   };
+  
   return (
     <div className="">
       <div className="p-3 bg-primary">
@@ -206,6 +225,7 @@ function UserManage() {
             <SearchIcon />
           </span>
           <input
+          onChange={(e)=>{setSearchUser(e.target.value)}}
             type="text"
             className="form-control"
             placeholder="Username"
