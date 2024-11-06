@@ -17,7 +17,7 @@ import Card from "react-bootstrap/Card";
 import ImgPreview from "../../Utility/Model/ImgPreview";
 import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
-import Pagination from '@mui/material/Pagination';
+import Pagination from "@mui/material/Pagination";
 
 function DataTable() {
   const [datas, setDatas] = useState([]);
@@ -27,9 +27,9 @@ function DataTable() {
   const [filter, setFilter] = useState();
   const [show, setShow] = useState(false);
   const [filters, setFilters] = useState(false);
-  const [page, setPage] = useState()
-  const [pageApi, setPageApi] = useState()
-  const [limit, setLimit] = useState(1)
+  const [page, setPage] = useState();
+  const [pageApi, setPageApi] = useState();
+  const [limit, setLimit] = useState(1);
   const [file, setFile] = useState([]);
   const [images, setImages] = useState([]);
   const [clients, setClients] = useState([]);
@@ -64,13 +64,13 @@ function DataTable() {
     setDescription("");
   };
   const handleShowAdd = () => setShowAdd(true);
-  const changeBackGroun = (status)=>{
-    if(status === 'DONE'){
-      return 'green'
-    } else if(status === 'PENDING'){
-      return 'gray'
-    } else return 'red'
-  }
+  const changeBackGroun = (status) => {
+    if (status === "DONE") {
+      return "green";
+    } else if (status === "PENDING") {
+      return "gray";
+    } else return "red";
+  };
 
   const updatedDateFormats = (prop) => {
     var dateFormat = new Date(prop);
@@ -135,20 +135,32 @@ function DataTable() {
       .get(
         `/api/issue/?${
           debounceSearchClient ? "client=" + debounceSearchClient : ""
-        }${debouncedSearchTerm ? "&search=" + debouncedSearchTerm : ""}${status ? "&issueType=" + status : ""}${startDate ? "&startDate=" + startDate : ""}${endDate ? "&endDate=" + endDate : ""}${
-          limit ? "&limit=" + limit : ""}${pageApi ? "&page=" + pageApi : ""}`
+        }${debouncedSearchTerm ? "&search=" + debouncedSearchTerm : ""}${
+          status ? "&issueType=" + status : ""
+        }${startDate ? "&startDate=" + startDate : ""}${
+          endDate ? "&endDate=" + endDate : ""
+        }${limit ? "&limit=" + limit : ""}${pageApi ? "&page=" + pageApi : ""}`
       )
       .then((res) => res.data)
-      .then((ress) => {setDatas(ress.content)
-        setPage(ress.totalElements)
+      .then((ress) => {
+        setDatas(ress.content);
+        setPage(ress.totalElements);
       });
   };
   useEffect(() => {
     fetchIssue();
-  }, [startDate, endDate, status, debouncedSearchTerm, debounceSearchClient, pageApi, limit]);
+  }, [
+    startDate,
+    endDate,
+    status,
+    debouncedSearchTerm,
+    debounceSearchClient,
+    pageApi,
+    limit,
+  ]);
 
   const roundedNumber = Math.ceil(page / limit);
-console.log(limit)
+  console.log(limit);
   const onBtExportIssue = async (e) => {
     if (startDate || endDate) {
       try {
@@ -196,7 +208,6 @@ console.log(limit)
     }
   }, [startDate, endDate, status]);
   const handleClient = async () => {
-    
     await api
       .get("/api/clients/")
       .then((res) => res.data)
@@ -544,7 +555,6 @@ console.log(limit)
               }}
             />
           </div>
-
           <div className="input-group input-group-sm m-1" style={{}}>
             <span className="input-group-text" id="basic-addon1">
               To
@@ -673,11 +683,17 @@ console.log(limit)
                     <td style={{ fontSize: "14px" }}>{value.solution}</td>
                     <td style={{ fontSize: "14px" }}>{value.issue_type}</td>
                     <td style={{ fontSize: "14px" }}>{value.creator}</td>
-                    <td style={{ fontSize: "12px",}}>
-                      <p className="mb-0 rounded text-center" style={{ backgroundColor: changeBackGroun(value.status), color:'white', fontWeight:'bold' }}>
-                      {value.status}
+                    <td style={{ fontSize: "12px" }}>
+                      <p
+                        className="mb-0 rounded text-center"
+                        style={{
+                          backgroundColor: changeBackGroun(value.status),
+                          color: "white",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {value.status}
                       </p>
-                      
                     </td>
                   </tr>
                 );
@@ -685,9 +701,11 @@ console.log(limit)
           </tbody>
         </table>
       </div>
-      <Pagination count={roundedNumber}  onChange={(e, value) => setPageApi(value-1)}/>
+      <Pagination
+        count={roundedNumber}
+        onChange={(e, value) => setPageApi(value - 1)}
+      />
     </div>
   );
 }
-
 export default DataTable;
