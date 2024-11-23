@@ -121,7 +121,7 @@ function MonthlyReportView() {
   return (
     <div className="container-fluid p-0 w-100">
       <div className="bg-primary p-3">
-        <h3 className="text-white mb-0">Monthly Report</h3>
+        <h3 className="text-white mb-0">Monthlyk Report</h3>
       </div>
       <div className="p-3 d-flex justify-content-between align-items-center">
         <nav aria-label="breadcrumb">
